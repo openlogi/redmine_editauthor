@@ -56,7 +56,7 @@ module RedmineEditauthor
 
       def possible_authors(project)
         if Settings.members_scope?
-          project.users.sorted
+          project.users.sorted.to_a
         else
           role_ids = Role.joins(:members)
                        .where(members: { project_id: project.id })
@@ -67,7 +67,7 @@ module RedmineEditauthor
 
           User.active.sorted.joins(members: :roles).distinct(:id)
             .where("#{MemberRole.table_name}.role_id IN (?) OR #{User.table_name}.admin = ?",
-                   role_ids, true)
+                   role_ids, true).to_a
         end
       end
 
